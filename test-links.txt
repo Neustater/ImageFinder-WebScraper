@@ -1,0 +1,9 @@
+Please paste your list of test URLs below:
+http://www.gemtor.com
+http://www.rutgers.edu
+http://books.toscrape.com
+https://www.scrapethissite.com/pages/
+https://shop.oliviarodrigo.com
+http://www.kenlew.com/collections/postcards/ru/index.html
+https://bageltalkofmarlboro.com
+http://www.coltsnecktrack.com

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!-- Template by Quackit.com -->
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Image Finder</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom Fonts from Google -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+</head>
+<script>
+    window.addEventListener('load', function () {
+        var resultList = document.querySelector('ul.results');
+        var urlInput = document.querySelector('input[name=url]')
+
+        apiCallBack = function (xhr, callback) {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                if (xhr.status != 200) {
+                    let message = xhr.status + ":" + xhr.statusText + ":"
+                        + xhr.responseText;
+                    alert(message);
+                    throw 'API call returned bad code: ' + xhr.status;
+                }
+                let response = xhr.responseText ? JSON.parse(xhr.responseText)
+                    : null;
+                if (callback) {
+                    callback(response);
+                }
+            }
+        }
+
+        updateList = function (response) {
+            document.getElementById("scraping").style.color = "#f5693b";
+            document.getElementById("scraping").innerHTML = "Scraping Complete! ".bold() +
+                "<br> (Scroll Down to View Images)";
+
+            resultList.innerHTML = '';
+
+            for (var i = 0; i < response.length; i++) {
+
+                    var img = document.createElement("img");
+                    img.width = 200;
+                    img.src = response[i];
+
+                    resultList.appendChild(img);
+            }
+        }
+
+        makeApiCall = function (url, method, obj, callback) {
+            let xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);
+            xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);
+        }
+
+        document.querySelector('button').addEventListener("click", function (event) {
+            event.preventDefault();
+            document.getElementById("scraping").style.color = "#fff"
+            document.getElementById("scraping").innerHTML = "Scraping Images!".bold() + "<br>(This May Take a While)";
+            makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);
+        })
+    })
+</script>
+
+    <!-- Navigation -->
+    <nav id="siteNav" class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Logo and responsive toggle -->
+            <div class="navbar-header">
+
+                <a class="navbar-brand" href="#">
+                	<span class="glyphicon glyphicon-fire"></span> 
+                	Web Scraper
+                </a>
+            </div>
+        </div><!-- /.container -->
+    </nav>
+
+	<!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h1>Image Finder</h1>
+                <p>Java Web Scraper used to retrieve images from specified address and other connected addresses with the same domain.</p>
+                <p>(Please use format: http://www.foo.com for addresses)
+                    <div class="input">
+                     <font color="black">
+                        <form>
+                            <input type="text" name="url">
+                        </font>
+                        </form><p id="scraping"> </p>
+                        <button type="button" class="btn btn-primary btn-lg">Submit!</button>
+
+            </div>
+        </div>
+    </header>
+
+    <content>
+        </div>
+        <div class="output">
+            <ul class="results">
+            </ul>
+        </div>
+    </content>
+    
+	<!-- Footer -->
+    <footer class="page-footer">
+        <div class="contact">
+        	<div class="container">
+                <p>Michael Neustater 2021</p>
+            </div>
+        </div>
+        
+    </footer>
+
+</html>

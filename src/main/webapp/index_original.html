@@ -1,0 +1,117 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Eulerity Take-Home Challenge</h1>
+
+	<h2>How it works</h2>
+	<ul>
+		<li>Pressing the submit button on this page will make a POST
+			request to /main</li>
+		<li>That request will contain a form parameter with the url
+			populated in the input box below</li>
+		<li>The ImageFinder servlet will respond to the request with a
+			list of image urls</li>
+		<li>This page contains javascript to send the request and use the
+			response to build a list of images</li>
+	</ul>
+	<h2>Backend Developers</h2>
+	<ul>
+		<li>You can update the ImageFinder servlet to add crawling logic</li>
+		<li>Feel free to add as many classes/packages/files/third party
+			libraries as you'd like</li>
+		<li>We recommend JSoup for parsing web pages</li>
+		<li>You can update this page's html/css/style if you plan on
+			improving the interface</li>
+		<li>Your final submission does not need to contain any of the
+			files included herein</li>
+		<li>This project is just skeleton code so you can hit the ground
+			running.</li>
+		<li>Some ideas:
+			<ul>
+			<li>Crawl not only the given url, but other pages in the same domain</li>
+			<li>Make your crawler multithreaded to speed up response times</li>
+			<li>Be a friendly crawler and try not to hammer a site</li>
+			<li>Think about how to identify different classes of images and do they need special handling</li>
+			<li>Can you identify images as logos? Perhaps collect favicons?</li>
+			<li>Can you mark images that contain people?</li>
+			</ul>
+		</li>
+	</ul>
+	<h2>Important Notes</h2>
+	<p>Congratulations on making it this far into the interview
+		process!</p>
+	<p>
+	This is a free-form hackathon for a very important reason. We wish to see what ideas you can bring to the table.
+	</p>
+	<p><strong>If your submission only contains 5-10 lines of new code, please think twice about submitting it.</strong> If you need more time, you can ask for it.
+	</p>
+	<p>
+	You can use one of the ideas above, but feel free to go off and build something completely different. 
+	The important thing is to submit something that highlights your strengths as a developer.
+	</p>
+	<p>
+	  <b>Remember, this is your chance to show off how you can best contribute to our team.</b>
+	</p>
+	<p>Please remember to think about good design and code style. Comments in your code are great, but thought should also be taken in how to name your variables and method.</p>
+
+
+
+	<div class="content">
+		<div class="input">
+			<form>
+				<input type="text" name="url">
+			</form>
+			<button type="button">Submit!</button>
+		</div>
+		<div class="output">
+			<ul class="results">
+
+			</ul>
+		</div>
+	</div>
+	<script>
+		var resultList = document.querySelector('ul.results');
+		var urlInput = document.querySelector('input[name=url]')
+
+		apiCallBack = function(xhr, callback) {
+			if (xhr.readyState == XMLHttpRequest.DONE) {
+				if (xhr.status != 200) {
+					let message = xhr.status + ":" + xhr.statusText + ":"
+							+ xhr.responseText;
+					alert(message);
+					throw 'API call returned bad code: ' + xhr.status;
+				}
+				let response = xhr.responseText ? JSON.parse(xhr.responseText)
+						: null;
+				if (callback) {
+					callback(response);
+				}
+			}
+		}
+
+		updateList = function(response) {
+			resultList.innerHTML = '';
+			for (var i = 0; i < response.length; i++) {
+				var img = document.createElement("img");
+				img.width = 200;
+				img.src = response[i];
+				resultList.appendChild(img);
+			}
+		}
+
+		makeApiCall = function(url, method, obj, callback) {
+			let xhr = new XMLHttpRequest();
+			xhr.open(method, url);
+			xhr.onreadystatechange = apiCallBack.bind(null, xhr, callback);
+			xhr.send(obj ? obj instanceof FormData || obj.constructor == String ? obj : JSON.stringify(obj) : null);
+		}
+
+		document.querySelector('button').addEventListener("click", function(event) {
+			event.preventDefault();
+			makeApiCall('/main?url=' + urlInput.value, 'POST', null, updateList);
+		});
+	</script>
+</body>
+
+</html>
